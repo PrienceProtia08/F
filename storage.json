@@ -1,26 +1,7 @@
-{
-  "name": "User",
-  "description": "This is a JSON object that represents a user.",
-  "properties": {
-    "id": {
-      "type": "string",
-      "description": "The unique identifier for the user."
-    },
-    "username": {
-      "type": "string",
-      "description": "The username of the user."
-    },
-    "email": {
-      "type": "string",
-      "description": "The email address of the user."
-    },
-    "bio": {
-      "type": "string",
-      "description": "A brief biography of the user."
-    },
-    "avatar_url": {
-      "type": "string",
-      "description": "The URL of the user's avatar image."
-    }
+[
+  {
+    "username": "Y",
+    "email": "y@gmail.com",
+    "bio": "H"
   }
-}
+]
