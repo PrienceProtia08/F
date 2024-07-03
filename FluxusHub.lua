@@ -208,17 +208,34 @@ end
 
 local function teleportToPlayer(targetName)
     local targetPlayer = Players:FindFirstChild(targetName)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") and
-       Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if not isTeleporting then
-            originalPosition = Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-            Players.LocalPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
-            isTeleporting = true
-            TeleportButton.Text = "Undo Teleport"
-        else
-            Players.LocalPlayer.Character.HumanoidRootPart.CFrame = originalPosition
-            isTeleporting = false
-            TeleportButton.Text = "Teleport"
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetRootPart = targetPlayer.Character.HumanoidRootPart
+        
+        if Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local localRootPart = Players.LocalPlayer.Character.HumanoidRootPart
+            
+            if not isTeleporting then
+                local originalPosition = localRootPart.CFrame
+                local originalVelocity = localRootPart.Velocity
+                local originalAngularVelocity = localRootPart.AngularVelocity
+                
+                localRootPart.CFrame = targetRootPart.CFrame
+                localRootPart.Velocity = targetRootPart.Velocity
+                localRootPart.AngularVelocity = targetRootPart.AngularVelocity
+                
+                isTeleporting = true
+                TeleportButton.Text = "Undo Teleport"
+                
+                task.spawn(function()
+                    wait(0.1)
+                    localRootPart.Velocity = originalVelocity
+                    localRootPart.AngularVelocity = originalAngularVelocity
+                end)
+            else
+                localRootPart.CFrame = originalPosition
+                isTeleporting = false
+                TeleportButton.Text = "Teleport"
+            end
         end
     end
 end
