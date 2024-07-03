@@ -6,126 +6,131 @@ local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 local HttpService = game:GetService("HttpService")
 
--- Create the GUI
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
 local Title = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+local ButtonsFrame = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
 local EspButton = Instance.new("TextButton")
 local RefreshButton = Instance.new("TextButton")
-local TeleportFrame = Instance.new("Frame")
-local TeleportTextBox = Instance.new("TextBox")
 local TeleportButton = Instance.new("TextButton")
 local FollowPlayerButton = Instance.new("TextButton")
+local PlayerListFrame = Instance.new("Frame")
 local PlayerList = Instance.new("ScrollingFrame")
-local UIListLayout = Instance.new("UIListLayout")
-local CloseButton = Instance.new("TextButton")
+local UIListLayout_PlayerList = Instance.new("UIListLayout")
 
-ScreenGui.Name = "FluxusESP"
+-- Function to create a button
+local function CreateButton(name, parent)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Parent = parent
+    button.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
+    button.Size = UDim2.new(1, -10, 0, 40)
+    button.Font = Enum.Font.GothamSemibold
+    button.Text = name
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
+    button.AutoButtonColor = false
+
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, 8)
+    uiCorner.Parent = button
+
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(103, 123, 196)}):Play()
+    end)
+
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(114, 137, 218)}):Play()
+    end)
+
+    return button
+end
+
+-- Setup ScreenGui
+ScreenGui.Name = "ScriptUI"
 ScreenGui.Parent = game:GetService("CoreGui")
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
 
+-- Main Frame
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(54, 57, 63)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-MainFrame.Size = UDim2.new(0, 300, 0, 400)
-MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
+MainFrame.Position = UDim2.new(0.5, -125, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 250, 0, 300)
+MainFrame.ClipsDescendants = true
 
-UICorner.Parent = MainFrame
 UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
 
+-- Title
 Title.Name = "Title"
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 10, 0, 10)
-Title.Size = UDim2.new(1, -60, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 5)
+Title.Size = UDim2.new(1, -50, 0, 30)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "Fluxus ESP"
+Title.Text = "Script UI"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 24
+Title.TextSize = 18
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
+-- Close Button
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = MainFrame
 CloseButton.BackgroundColor3 = Color3.fromRGB(240, 71, 71)
-CloseButton.Position = UDim2.new(1, -40, 0, 10)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Font = Enum.Font.GothamBold
 CloseButton.Text = "X"
 CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.TextSize = 18
+CloseButton.TextSize = 14
 
-EspButton.Name = "EspButton"
-EspButton.Parent = MainFrame
-EspButton.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
-EspButton.Position = UDim2.new(0.05, 0, 0.15, 0)
-EspButton.Size = UDim2.new(0.9, 0, 0, 40)
-EspButton.Font = Enum.Font.Gotham
-EspButton.Text = "Toggle ESP"
-EspButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-EspButton.TextSize = 18
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 15)
+closeCorner.Parent = CloseButton
 
-RefreshButton.Name = "RefreshButton"
-RefreshButton.Parent = MainFrame
-RefreshButton.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
-RefreshButton.Position = UDim2.new(0.05, 0, 0.28, 0)
-RefreshButton.Size = UDim2.new(0.9, 0, 0, 40)
-RefreshButton.Font = Enum.Font.Gotham
-RefreshButton.Text = "Refresh"
-RefreshButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-RefreshButton.TextSize = 18
+-- Buttons Frame
+ButtonsFrame.Name = "ButtonsFrame"
+ButtonsFrame.Parent = MainFrame
+ButtonsFrame.BackgroundTransparency = 1
+ButtonsFrame.Position = UDim2.new(0, 5, 0, 40)
+ButtonsFrame.Size = UDim2.new(1, -10, 0, 200)
 
-TeleportFrame.Name = "TeleportFrame"
-TeleportFrame.Parent = MainFrame
-TeleportFrame.BackgroundColor3 = Color3.fromRGB(66, 70, 77)
-TeleportFrame.Position = UDim2.new(0.05, 0, 0.41, 0)
-TeleportFrame.Size = UDim2.new(0.9, 0, 0, 200)
-
-TeleportTextBox.Name = "TeleportTextBox"
-TeleportTextBox.Parent = TeleportFrame
-TeleportTextBox.BackgroundColor3 = Color3.fromRGB(79, 84, 92)
-TeleportTextBox.Position = UDim2.new(0, 0, 0, 0)
-TeleportTextBox.Size = UDim2.new(1, 0, 0, 40)
-TeleportTextBox.Font = Enum.Font.Gotham
-TeleportTextBox.Text = ""
-TeleportTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-TeleportTextBox.TextSize = 18
-TeleportTextBox.PlaceholderText = "Enter Player Name"
-
-TeleportButton.Name = "TeleportButton"
-TeleportButton.Parent = TeleportFrame
-TeleportButton.BackgroundColor3 = Color3.fromRGB(240, 71, 71)
-TeleportButton.Position = UDim2.new(0, 0, 0.25, 0)
-TeleportButton.Size = UDim2.new(1, 0, 0, 40)
-TeleportButton.Font = Enum.Font.Gotham
-TeleportButton.Text = "Teleport"
-TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-TeleportButton.TextSize = 18
-
-FollowPlayerButton.Name = "FollowPlayerButton"
-FollowPlayerButton.Parent = TeleportFrame
-FollowPlayerButton.BackgroundColor3 = Color3.fromRGB(67, 181, 129)
-FollowPlayerButton.Position = UDim2.new(0, 0, 0.5, 0)
-FollowPlayerButton.Size = UDim2.new(1, 0, 0, 40)
-FollowPlayerButton.Font = Enum.Font.Gotham
-FollowPlayerButton.Text = "Follow Player"
-FollowPlayerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FollowPlayerButton.TextSize = 18
-
-PlayerList.Name = "PlayerList"
-PlayerList.Parent = TeleportFrame
-PlayerList.BackgroundColor3 = Color3.fromRGB(79, 84, 92)
-PlayerList.Position = UDim2.new(0, 0, 0.75, 0)
-PlayerList.Size = UDim2.new(1, 0, 0.25, 0)
-PlayerList.CanvasSize = UDim2.new(0, 0, 5, 0)
-
-UIListLayout.Parent = PlayerList
+UIListLayout.Parent = ButtonsFrame
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 5)
+
+-- Create Buttons
+EspButton = CreateButton("Toggle ESP", ButtonsFrame)
+RefreshButton = CreateButton("Refresh", ButtonsFrame)
+TeleportButton = CreateButton("Teleport", ButtonsFrame)
+FollowPlayerButton = CreateButton("Follow Player", ButtonsFrame)
+
+-- Player List Frame
+PlayerListFrame.Name = "PlayerListFrame"
+PlayerListFrame.Parent = MainFrame
+PlayerListFrame.BackgroundColor3 = Color3.fromRGB(47, 49, 54)
+PlayerListFrame.Position = UDim2.new(0, 5, 1, -55)
+PlayerListFrame.Size = UDim2.new(1, -10, 0, 50)
+
+local playerListCorner = Instance.new("UICorner")
+playerListCorner.CornerRadius = UDim.new(0, 8)
+playerListCorner.Parent = PlayerListFrame
+
+PlayerList.Name = "PlayerList"
+PlayerList.Parent = PlayerListFrame
+PlayerList.BackgroundTransparency = 1
+PlayerList.Size = UDim2.new(1, 0, 1, 0)
+PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerList.ScrollBarThickness = 4
+
+UIListLayout_PlayerList.Parent = PlayerList
+UIListLayout_PlayerList.SortOrder = Enum.SortOrder.Name
+UIListLayout_PlayerList.Padding = UDim.new(0, 2)
 
 local espEnabled = false
 local espObjects = {}
